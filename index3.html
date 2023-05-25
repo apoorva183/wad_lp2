@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .light-blue {
+            background-color: lightblue;
+        }
+
+        .light-green {
+            background-color: lightgreen;
+        }
+
+        .light-yellow {
+            background-color: lightyellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="input-group">
+            <label for="input1">Table 1 Dimensions:</label>
+            <input id="input1" type="text" placeholder="Enter dimensions (e.g., 3#3#3)">
+        </div>
+        <div class="input-group">
+            <label for="input2">Table 2 Dimensions:</label>
+            <input id="input2" type="text" placeholder="Enter dimensions (e.g., 3#3#2)">
+        </div>
+        <button onclick="generateTables()">Generate Tables</button>
+    </div>
+    
+    <br>
+    <table id="table1"></table>
+    <br>
+    <table id="table2"></table>
+    <br>
+    <table id="table3"></table>
+
+    <script>
+        function generateTable(tableId, rows, cols, startValue) {
+            var table = document.getElementById(tableId);
+            table.innerHTML = "";
+
+            var currentValue = startValue;
+
+            for (var i = 0; i < rows; i++) {
+                var row = document.createElement("tr");
+                for (var j = 0; j < cols; j++) {
+                    var cell = document.createElement("td");
+                    cell.textContent = currentValue;
+                    row.appendChild(cell);
+                    currentValue++;
+                }
+                table.appendChild(row);
+            }
+        }
+
+
+        function generateTables() {
+            var input1 = document.getElementById("input1").value;
+            var input2 = document.getElementById("input2").value;
+
+            var table1Dimensions = input1.split("#");
+            var table2Dimensions = input2.split("#");
+
+            var table1Rows = parseInt(table1Dimensions[0]);
+            var table1Cols = parseInt(table1Dimensions[1]);
+
+            var table2Rows = parseInt(table2Dimensions[0]);
+            var table2Cols = parseInt(table2Dimensions[1]);
+
+            var table1Start = parseInt(table1Dimensions[2]);
+            var table2Start = parseInt(table2Dimensions[2]);
+
+            generateTable("table1", table1Rows, table1Cols, table1Start);
+            generateTable("table2", table2Rows, table2Cols, table2Start);
+
+            if (table1Rows === table2Rows && table1Cols === table2Cols) {
+                generateThirdTable(table1Rows, table1Cols, table1Start, table2Start);
+            }
+        }
+
+
+        function generateThirdTable(rows, cols, startValue1, startValue2) {
+            var table1 = document.getElementById("table1");
+            var table2 = document.getElementById("table2");
+            var table3 = document.getElementById("table3");
+            table3.innerHTML = "";
+
+            var uniqueValues = new Set();
+
+            var currentValue = startValue1 > startValue2 ? startValue1 : startValue2;
+
+            for (var i = 0; i < rows; i++) {
+                var row = document.createElement("tr");
+                for (var j = 0; j < cols; j++) {
+                    var cell = document.createElement("td");
+                    var value1 = parseInt(table1.rows[i].cells[j].textContent);
+                    var value2 = parseInt(table2.rows[i].cells[j].textContent);
+
+                    if (value1 === value2) {
+                        cell.textContent = value1;
+                        cell.className = "light-blue";
+                    } else {
+                        var result = value1 * value2;
+                        cell.textContent = result;
+
+                        if (uniqueValues.has(result)) {
+                            cell.className = "light-yellow";
+                        } else {
+                            cell.className = "light-green";
+                            uniqueValues.add(result);
+                        }
+                    }
+                    row.appendChild(cell);
+                    currentValue++;
+                }
+                table3.appendChild(row);
+            }
+        }
+    </script>
+</body>
+
+</html>
